@@ -24,7 +24,7 @@ class ListItem extends React.Component {
         </div>
         <div className="content operations">
           <div className="ui basic button"
-               onClick={() => this.props.setMyBranch(this.branch)}>
+               onClick={() => this.setBranch()}>
             <i className="yellow star icon"></i>
             Set Branch
           </div>
@@ -53,6 +53,11 @@ class ListItem extends React.Component {
 
   showDirectionsPanel(branch) {
     this.props.selectListItem(branch)
+  }
+
+  setBranch() {
+    localStorage.setItem('branch', JSON.stringify(this.branch))
+    this.props.setMyBranch(this.branch)
   }
 
 }

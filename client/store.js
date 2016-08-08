@@ -5,7 +5,7 @@ import branches from './data/branches'
 const defaultState = {
   branches,
   currentListItem: {},
-  myBranch: localStorage.getItem('myBranch') || {}
+  myBranch: JSON.parse(localStorage.getItem('branch')) || {}
 }
 const store = createStore(rootReducer, defaultState)
 

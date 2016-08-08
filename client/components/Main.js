@@ -34,10 +34,10 @@ class Main extends React.Component {
         <div className="ui bottom attached segment">
           <div className="ui stackable grid">
             <div className="row">
-              <div ref="infoPanel" className="nine wide column">
+              <div ref="infoPanel" className="left five wide column">
                 <List {...this.props} map={this.map}/>
               </div>
-              <div className="seven wide column">
+              <div className="right eleven wide column">
                 <div ref="map" className="map-canvas"></div>
               </div>
             </div>
@@ -55,7 +55,8 @@ class Main extends React.Component {
     }).then(gmaps => {
       this.map = new gmaps.Map(ReactDOM.findDOMNode(this.refs.map), {
         center: new gmaps.LatLng(39.203119, -84.512016),
-        zoom: 13
+        zoom: 13,
+        styles: this.setMapStyle()
       })
       this.locateMe()
       this.loadData()
@@ -69,6 +70,10 @@ class Main extends React.Component {
       )
       gmaps.event.addListener(this.map, 'bounds_changed', () => this.updateListFromExtent())
     })
+  }
+
+  setMapStyle() {
+    return [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#e81e07"}]},{"featureType":"administrative","elementType":"labels.text.stroke","stylers":[{"color":"#f9f9f9"},{"weight":6}]},{"featureType":"landscape","elementType":"all","stylers":[{"lightness":20},{"color":"#f9f9f9"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#f2ede5"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"hue":"#11ff00"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"lightness":100}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"hue":"#4cff00"},{"saturation":58}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"lightness":-100}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"lightness":100}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#f2ede5"},{"lightness":-25}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#f2ede5"},{"lightness":-40}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#f2ede5"},{"lightness":-10}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"color":"#f2ede5"},{"lightness":-20}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#0a305b"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"lightness":-100}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"lightness":100}]}]
   }
 
   loadData() {
@@ -146,17 +151,27 @@ class Main extends React.Component {
   }
 
   locateMe() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        let pos = new google.maps.LatLng(
-          position.coords.latitude,
-          position.coords.longitude
-        )
-        // mock position
-        pos = new google.maps.LatLng(39.233119, -84.592016)
-        this.map.setCenter(pos)
+    setTimeout(() => {
+      const pos = new google.maps.LatLng(39.233119, -84.592016)
+      this.map.setCenter(pos)
+      const locationInfoWindow = new google.maps.InfoWindow({
+        content: 'You are here.',
+        position: pos,
+        pixelOffset: new google.maps.Size(0, -25)
       })
-    }
+      const marker = new google.maps.Marker({
+        animation: 'DROP',
+        position: pos,
+        map: this.map,
+        icon: {
+          url: 'public/images/star.png'
+        }
+      })
+      locationInfoWindow.open(this.map)
+      marker.addListener('click', () => {
+        locationInfoWindow.open(this.map)
+      })
+    } , 2000)
   }
 
   addPopup() {

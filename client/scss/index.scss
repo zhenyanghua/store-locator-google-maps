@@ -74,12 +74,12 @@ h1 {
     .row {
       .wide.column {
         padding: 0 !important;
-        &.seven {
+        &.right {
           position: absolute;
           top: 0;
           left: 0;
         }
-        &.nine {
+        &.left {
           position: absolute;
           top: 150px;
           left: 0;
